@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery Store with Login System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('https://img.freepik.com/premium-photo/online-grocery-shopping-home-delivery-concept-with-empty-space-incorporating-grocery-app-f_398492-15947.jpg');
+      background-size: cover;
+      background-position: center center;
+      color: #333;
+      height: 90vh;
+    }
+    
+
+
+    header {
+      background-color: #28a745;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 1em;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    main {
+      padding: 1em;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    #products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      justify-content: center;
+    }
+
+    .product {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: white;
+      width: 300px;
+      padding: 1em;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .product:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .product img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 1em;
+    }
+
+    .product h3 {
+      margin: 0.5em 0;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 0.5em 1em;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 0.5em;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #cart {
+      margin-top: 2em;
+    }
+
+    #cart-items {
+      list-style: none;
+      padding: 0;
+    }
+
+    #cart-items li {
+      margin: 0.5em 0;
+    }
+
+    #payment-details {
+      margin-top: 1em;
+    }
+
+    label {
+      display: block;
+      margin: 0.5em 0 0.2em;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1em;
+      background-color: #f1f1f1;
+      margin-top: 2em;
+      font-size: 0.9em;
+    }
+
+    .container {
+      width: 400px;
+      background: white;
+      padding: 2em;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      margin: 2em auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    .toggle {
+      text-align: center;
+      margin-top: 1em;
+    }
+
+    .toggle a {
+      color: #28a745;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .toggle a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    .success {
+      color: green;
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    #main-content {
+      display: none;
+    }
+
+    #receipt-container {
+      display: none;
+      max-width: 800px;
+      margin: 2em auto;
+      padding: 2em;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+
+    #receipt-container h2 {
+      text-align: center;
+    }
+
+    #receipt-container ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #receipt-container li {
+      margin: 0.5em 0;
+    }
+
+    #receipt-container button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 0.5em 1em;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 1em;
+    }
+
+    #receipt-container button:hover {
+      background-color: #218838;
+    }
+    #qr-code-container {
+  text-align: center;
+  margin-top: 1em;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 200px; /* Set a specific height for the container */
+ 
+}
+  </style>
+</head>
+<body>
+  <div class="container" id="login-container">
+    <h2 id="form-title">Login</h2>
+    <div id="message"></div>
+    <form id="auth-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" placeholder="Enter your username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter your password" required>
+
+      <button type="submit">Login</button>
+    </form>
+    <div class="toggle">
+      <p id="toggle-text">Don't have an account? <a href="#" onclick="toggleForm()">Sign up</a></p>
+    </div>
+  </div>
+
+   <!-- QR Code Section -->
+   <div id="qr-code-container">
+    <h3>Scan this QR code to visit our website:</h3>
+    <div id="qrcode"></div>
+  </div>
+</div>
+
+  <div id="main-content">
+    <header>
+      <h1>Welcome to DRAC Mart Store</h1>
+      <nav>
+        <a href="#products">Products</a>
+        <a href="#cart">Cart</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="products">
+        <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 1em;">
+          <h2>Our Products</h2>
+        </div>
+
+        <div class="product">
+          <img src="https://cdn.pixabay.com/photo/2016/11/18/13/47/apple-1834639_1280.jpg" alt="Apple" style="width: 300px; height: 200px;">
+          <h3>Apple</h3>
+          <p>₱30 per piece</p>
+          <button onclick="addToCart('Apple', 30)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://www.shutterstock.com/image-photo/bunch-bananas-isolated-on-white-600nw-1722111529.jpg" alt="Banana" style="width: 300px; height: 200px;">
+
+          <h3>Banana</h3>
+          <p>₱20 per piece</p>
+          <button onclick="addToCart('Banana', 20)">Add to Cart</button>
+          
+          </div>
+
+        <div class="product">
+          <img src="https://images.freshop.ncrcloud.com/1564405684704764713/0110393958158dc614d2f3c22c9b5c5a_large.png" alt="French Fries" style="width: 300px; height: 200px;" >
+          <h3>French Fries</h3>
+          <p>₱140 per kilogram</p>
+          <button onclick="addToCart('French Fries', 140)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://4rfreshandfrozen.com/cdn/shop/products/Whiteegg_2048x2048.jpg?v=1587294486" alt="Eggs" style="width: 300px; height: 200px;">
+          <h3>Eggs</h3>
+          <p>₱70 per dozen</p>
+          <button onclick="addToCart('Eggs', 70)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://pgmobile.puregold.com.ph/images/4806502720615.jpg?v=12" alt="Bread" style="width: 300px; height: 200px;">
+          <h3>Bread</h3>
+          <p>₱40 per loaf</p>
+          <button onclick="addToCart('Bread', 40)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://www.organicoptions.store/cdn/shop/files/whole_2_c00a966f-14a6-4e55-be5c-6a6f2c7b27e8.jpg?v=1723600869" alt="Chicken" style="width: 300px; height: 200px;">
+          <h3>Chicken</h3>
+          <p>₱150 per kilogram</p>
+          <button onclick="addToCart('Chicken', 150)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://media.philstar.com/photos/2024/01/03/carrots2023-12-2716-44-36_2024-01-03_22-33-52.jpg" alt="Carrot" style="width: 300px; height: 200px;">
+          <h3>Carrot</h3>
+          <p>₱30 per piece</p>
+          <button onclick="addToCart('Carrot', 30)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://www.snrshopping.com/upload/product/S-R-Maple-Cured-Smoked-Ham-1kg-5346/SR%20Maple%20Cured%20Smoked%20Ham%201kg-VN4GqGkYMl.jpg" alt="Bacon" style="width: 300px; height: 200px;">
+          <h3>Bacon</h3>
+          <p>₱549 per kilogram</p>
+          <button onclick="addToCart('Bacon', 549)">Add to Cart</button>
+        </div>
+
+        <div class="product">
+          <img src="https://www.pacificbay.com.ph/cdn/shop/products/mozzarella-shredded-470488.jpg?v=1626937344" alt="Cheese" style="width: 300px; height: 200px;">
+          <h3>Cheese</h3>
+          <p>₱259 per pack</p>
+          <button onclick="addToCart('Cheese', 259)">Add to Cart</button>
+        </div>
+      <!-- Add more products here as needed -->
+
+      </section>
+
+      <section id="cart">
+        <h2>Your Cart</h2>
+        <ul id="cart-items"></ul>
+        <p>Total: ₱<span id="total">0</span></p>
+
+        <div id="payment-details">
+          <h3>Delivery Details:</h3>
+          <label for="name">Name:</label>
+          <input type="text" id="name" placeholder="Enter your name" required>
+
+          <label for="address">Delivery Address:</label>
+          <textarea id="address" placeholder="Enter your delivery address" rows="3" required></textarea>
+
+          <label for="phone">Phone Number:</label>
+          <input type="text" id="phone" placeholder="Enter your phone number" required>
+        </div>
+
+        <div id="payment-method">
+          <h3>Select Payment Method:</h3>
+          <label>
+            <input type="radio" name="payment" value="Cash on Delivery" checked>
+            Cash on Delivery
+          </label>
+          <label>
+            <input type="radio" name="payment" value="Credit/Debit Card">
+            Credit/Debit Card
+          </label>
+          <label>
+            <input type="radio" name="payment" value="GCash">
+            GCash
+          </label>
+        </div>
+
+        <button onclick="checkout()">Checkout</button>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 DRAC Mart Store.</p>
+    </footer>
+  </div>
+
+  <div id="receipt-container">
+    <h2>Order Receipt</h2>
+    <div>
+      <h3>Customer Information</h3>
+      <p><strong>Name:</strong> <span id="receipt-name"></span></p>
+      <p><strong>Address:</strong> <span id="receipt-address"></span></p>
+      <p><strong>Phone:</strong> <span id="receipt-phone"></span></p>
+
+      <h3>Order Details</h3>
+      <ul id="receipt-items"></ul>
+      <p><strong>Total: ₱</strong><span id="receipt-total"></span></p>
+
+      <h3>Payment Method</h3>
+      <p><span id="receipt-payment"></span></p>
+
+      <button onclick="window.print()">Print Receipt</button>
+    </div>
+  </div>
+
+ <!-- QRCode.js library -->
+ <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+  <script>
+    const loginContainer = document.getElementById('login-container');
+    const mainContent = document.getElementById('main-content');
+    const message = document.getElementById('message');
+
+    document.getElementById('auth-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const formTitle = document.getElementById('form-title').textContent;
+
+      if (formTitle === 'Sign Up') {
+        // Sign-Up process: Store user details in localStorage
+        if (localStorage.getItem(username)) {
+          message.innerHTML = '<p class="error">Username already exists. Please choose another one.</p>';
+        } else {
+          localStorage.setItem(username, password);
+          message.innerHTML = '<p class="success">Account created successfully! You can now log in.</p>';
+        }
+      } else {
+        // Login process: Check if user exists in localStorage
+        const storedPassword = localStorage.getItem(username);
+        if (storedPassword && storedPassword === password) {
+          loginContainer.style.display = 'none';
+          mainContent.style.display = 'block';
+        } else {
+          message.innerHTML = '<p class="error">Invalid username or password.</p>';
+        }
+      }
+    });
+
+    function toggleForm() {
+      const isLogin = document.getElementById('form-title').textContent === 'Login';
+      document.getElementById('form-title').textContent = isLogin ? 'Sign Up' : 'Login';
+      document.getElementById('toggle-text').innerHTML = isLogin ? 
+        "Already have an account? <a href='#' onclick='toggleForm()'>Login</a>" : 
+        "Don't have an account? <a href='#' onclick='toggleForm()'>Sign up</a>";
+      document.querySelector('button').textContent = isLogin ? 'Sign Up' : 'Login';
+    }
+
+    function resetMessage() {
+      message.innerHTML = '';
+    }
+
+    let cart = [];
+    function addToCart(product, price) {
+      const productIndex = cart.findIndex(item => item.product === product);
+      if (productIndex === -1) {
+        cart.push({ product, price, quantity: 1 });
+      } else {
+        cart[productIndex].quantity++;
+      }
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById('cart-items');
+      cartItems.innerHTML = '';
+      let total = 0;
+
+      cart.forEach(item => {
+        total += item.price * item.quantity;
+        const listItem = document.createElement('li');
+        listItem.textContent = `${item.product} - ₱${item.price} x ${item.quantity}`;
+        cartItems.appendChild(listItem);
+      });
+
+      document.getElementById('total').textContent = total;
+
+      // Update receipt data
+      document.getElementById('receipt-items').innerHTML = cart.map(item => 
+        `<li>${item.product} - ₱${item.price} x ${item.quantity}</li>`
+      ).join('');
+      document.getElementById('receipt-total').textContent = total;
+    }
+
+    function checkout() {
+      const name = document.getElementById('name').value;
+      const address = document.getElementById('address').value;
+      const phone = document.getElementById('phone').value;
+      const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+      // Set receipt values
+      document.getElementById('receipt-name').textContent = name;
+      document.getElementById('receipt-address').textContent = address;
+      document.getElementById('receipt-phone').textContent = phone;
+      document.getElementById('receipt-payment').textContent = paymentMethod;
+
+      // Hide cart and show receipt
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('receipt-container').style.display = 'block';
+      
+}
+// QR Code generation
+    const qrcode = new QRCode(document.getElementById("qrcode"), {
+      text: window.location.href, // The current URL for the page
+      width: 128,
+      height: 128,
+      
+    });
+    
+  </script>
+</body>
+</html>
